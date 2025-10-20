@@ -60,9 +60,11 @@ df_filtered = df.groupby(pd.Grouper(key='datetime', freq=freq)).agg(
 df_filtered['total_bill'] = df_filtered['total_bill'] / 100
 
 # draw the line charts using aggregated column names
-st.line_chart(df_filtered.set_index('datetime')[['avg_price']], width=700, height=300)
-st.line_chart(df_filtered.set_index('datetime')[['avg_temp']], width=700, height=300)
-st.line_chart(df_filtered.set_index('datetime')[['total_bill']], width=700, height=300)
-st.line_chart(df_filtered.set_index('datetime')[['total_consumption']], width=700, height=300)
+st.line_chart(df_filtered.set_index('datetime')[['total_consumption']],y_label='Electricity Consumption [kWh]',x_label='Time' )
+st.line_chart(df_filtered.set_index('datetime')[['avg_price']], y_label='Average Price €,cents',x_label='Time') 
+st.line_chart(df_filtered.set_index('datetime')[['total_bill']], y_label='Electricity bill €',x_label='Time')
+st.line_chart(df_filtered.set_index('datetime')[['avg_temp']], y_label='Temperature °C',x_label='Time' )
+
+
 
 
