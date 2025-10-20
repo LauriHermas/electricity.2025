@@ -1,9 +1,8 @@
 import pandas as pd
 import streamlit as st
 #import csv files
-dfA = pd.read_csv("https://github.com/LauriHermas/electricity.2025/blob/main/Electricity_consumption_2015-2025.csv")
-dfB = pd.read_csv("https://github.com/LauriHermas/electricity.2025/blob/main/Electricity_price_2015-2025.csv",delimiter = ';',decimal=',')
-
+dfA = pd.read_csv("https://raw.githubusercontent.com/LauriHermas/electricity.2025/refs/heads/main/Electricity_consumption_2015-2025.csv")
+dfB = pd.read_csv("https://raw.githubusercontent.com/LauriHermas/electricity.2025/refs/heads/main/Electricity_price_2015-2025.csv",delimiter = ';',decimal=',')
 
 #convert time to pandas dateatime
 dfA['datetime'] = pd.to_datetime(dfA['time'],format = '%Y-%m-%d %H:%M:%S')
@@ -70,6 +69,7 @@ st.line_chart(df_filtered, x = 'datetime', y = 'Price', x_label ='Time', y_label
 st.line_chart(df_filtered, x = 'datetime', y = 'Temperature', x_label ='Time', y_label='Average Temperature °C')
 st.line_chart(df_filtered, x = 'datetime', y = 'bill', x_label ='Time', y_label='Total Bill €')
 st.line_chart(df_filtered, x = 'datetime', y = 'kWh', x_label ='Time', y_label='Total Consumption kWh')
+
 
 
 
