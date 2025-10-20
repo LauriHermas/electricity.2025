@@ -44,28 +44,25 @@ st.write("Average hourly price: ", df['Price'].mean().round(2), "cents")
 st.write("Average paid price: ", (df['bill'].sum()/df['kWh'].sum()).round(2), "cents")
 
 #selector for interval
-interval_group = st.multiselect(label='Select a period',options=['Daily','Weekly','Monthly'],default='Monthly',max_selections=1)
-interval = ''
-if(len(interval_group)>=1):
-    if(interval_group[0]=='Daily'):
-        interval = 'D'
-    elif(interval_group[0]=='Weekly'):
-        interval = 'W'
-    elif(interval_group[0]=='Monthly'):
-        interval = 'M'
+interval_choice = st.selectbox('Select a period', ['Daily', 'Weekly', 'Monthly'], index=2)
+freq_map = {'Daily': 'D', 'Weekly': 'W', 'Monthly': 'M'}
+freq = freq_map[interval_choice]
 
-df_avgP=df.groupby(pd.Grouper(key = 'datetime', freq = Interval))[['Price']].mean().reset_index()
-df_avgT=df.groupby(pd.Grouper(key = 'datetime', freq = Interval))[['Temperature']].mean().reset_index()
-df_totalC=df.groupby(pd.Grouper(key = 'datetime', freq = Interval))[['kWh']].sum().reset_index()
-df_totalB=df.groupby(pd.Grouper(key = 'datetime', freq = Interval))[['bill']].sum().reset_index()
+# group by using the selected frequency
+df_filtered = df.groupby(pd.Grouper(key='datetime', freq=freq)).agg(
+    avg_price=('Price', 'mean'),
+    avg_temp=('Temperature', 'mean'),
+    total_consumption=('kWh', 'sum'),
+    total_bill=('bill', 'sum')
+).reset_index()
 
-#convert bill to euros
-df_totalB['bill'] = df_totalB['bill']/100
+# convert bill to euros
+df_filtered['total_bill'] = df_filtered['total_bill'] / 100
 
-#draw the line charts
-st.line_chart(df_avgP, x = 'datetime', y = 'Price', x_label ='Time', y_label='Average Price €,cents')
-st.line_chart(df_avgT, x = 'datetime', y = 'Temperature', x_label ='Time', y_label='Average Temperature °C')
-st.line_chart(df_totalB, x = 'datetime', y = 'bill', x_label ='Time', y_label='Total Bill €')
-st.line_chart(df_totalC, x = 'datetime', y = 'kWh', x_label ='Time', y_label='Total Consumption kWh')
+# draw the line charts using aggregated column names
+st.line_chart(df_filtered.set_index('datetime')[['avg_price']], width=700, height=300)
+st.line_chart(df_filtered.set_index('datetime')[['avg_temp']], width=700, height=300)
+st.line_chart(df_filtered.set_index('datetime')[['total_bill']], width=700, height=300)
+st.line_chart(df_filtered.set_index('datetime')[['total_consumption']], width=700, height=300)
 
 
